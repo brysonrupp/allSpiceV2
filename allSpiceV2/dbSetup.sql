@@ -33,7 +33,7 @@ CREATE TABLE
     ) default charset utf8 COMMENT '';
 
 CREATE TABLE
-    likers(
+    favorites(
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         recipeId INT NOT NULL,
         accountId VARCHAR(255) NOT NULL,

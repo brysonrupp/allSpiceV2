@@ -24,21 +24,29 @@ public class FavoritesService
 
     internal string Delete(int id, string userId)
     {
-        Recipe original = _repo.GetOne(id);
+        Favorite original = _repo.GetOne(id);
         if (original == null)
         {
-            throw new Exception("no recipe to unlike");
+            throw new Exception("no favorite to unlike");
+        }
+        if (original.AccountId != userId)
+        {
+            throw new Exception("not favorited");
         }
         _repo.Delete(id);
-        return $"Recipe at {id} was removed";
+        return $"Favorite at {id} was removed";
     }
 
-    internal List<Favorite> GetFavorites(int recipeId, string userId)
+    // internal List<Favorite> GetFavorites(int recipeId, string userId)
+    // {
+    //     Recipe recipe = _recipesService.GetOne(recipeId, userId);
+    //     List<Favorite> favorites = _repo.GetFavorites(recipeId);
+    //     return favorites;
+    // }
+
+    internal List<FavoritedRecipe> GetFavorites(string accountId)
     {
-        Recipe recipe = _recipesService.GetOne(recipeId, userId);
-        List<Favorite> favorites = _repo.GetFavorites(recipeId);
-        return favorites;
+        List<FavoritedRecipe> favoritedRecipes = _repo.GetFavorites(accountId);
+        return favoritedRecipes;
     }
-
-
 }

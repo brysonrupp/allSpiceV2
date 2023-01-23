@@ -12,7 +12,7 @@ public class FavoriteRepository
     internal Favorite Create(Favorite newFavorite)
     {
         string sql = @"
-    INSERT INTO likers
+    INSERT INTO favorites
     (recipeId, accountId)
     VALUES
     (@recipeId, @accountId);
@@ -27,39 +27,55 @@ public class FavoriteRepository
     internal void Delete(int id)
     {
         string sql = @"
-        DELETE FROM recipes
+        DELETE FROM favorites
         WHERE id = @id;
         ";
         _db.Execute(sql, new { id });
     }
 
-    internal List<Favorite> GetFavorites(int recipeId)
+    // internal List<Favorite> GetFavorites(int recipeId)
+    // {
+    //     string sql = @"
+    //     SELECT
+    //     ac.*,
+    //     l.id AS likerId
+    //     FROM likers l
+    //     JOIN accounts ac ON ac.id = l.accountId
+    //     WHERE l.recipeId = @recipeId;
+    //     ";
+    //     return _db.Query<Favorite>(sql, new { recipeId }).ToList();
+    // }
+
+    internal List<FavoritedRecipe> GetFavorites(string accountId)
     {
         string sql = @"
-        SELECT
-        ac.*,
-        l.id AS likerId
-        FROM likers l
-        JOIN accounts ac ON ac.id = l.accountId
-        WHERE l.recipeId = @recipeId;
-        ";
-        return _db.Query<Favorite>(sql, new { recipeId }).ToList();
+    SELECT
+    re.*,
+    f.*,
+    cr.*
+    FROM favorites f
+    JOIN recipes re ON re.id = f.recipeId
+    JOIN accounts cr ON re.creatorId = cr.id
+    WHERE f.accountId = @accountId;
+    ";
+        List<FavoritedRecipe> favoritedRecipes = _db.Query<FavoritedRecipe, Favorite, Account, FavoritedRecipe>(sql, (re, f, cr) =>
+        {
+            re.FavoriteId = f.Id;
+            re.Creator = cr;
+            return re;
+        }, new { accountId }).ToList();
+        return favoritedRecipes;
     }
 
-    internal Recipe GetOne(int id)
+
+    internal Favorite GetOne(int id)
     {
         string sql = @"
         SELECT
-        re.*,
-        ac.*
-        FROM recipes re
-        JOIN accounts ac ON ac.id = re.creatorId
-        WHERE re.id = @id;
+      *
+        FROM favorites
+        WHERE id = @id;
         ";
-        return _db.Query<Recipe, Account, Recipe>(sql, (recipe, account) =>
-        {
-            recipe.Creator = account;
-            return recipe;
-        }, new { id }).FirstOrDefault();
+        return _db.Query<Favorite>(sql, new { id }).FirstOrDefault();
     }
 }
