@@ -23,12 +23,27 @@ public class RecipesService
         return recipes;
     }
 
+    internal Recipe Get(int id)
+    {
+        Recipe recipe = _repo.Get(id);
+        if (recipe == null)
+        {
+            throw new Exception("no recipe at that id");
+        }
+        return recipe;
+    }
+
+
     internal Recipe GetOne(int id, string userId)
     {
         Recipe recipe = _repo.GetOne(id);
         if (recipe == null)
         {
             throw new Exception("no recipe at that id");
+        }
+        if (recipe.CreatorId != userId)
+        {
+            throw new Exception("you dont own that recipe");
         }
         return recipe;
     }

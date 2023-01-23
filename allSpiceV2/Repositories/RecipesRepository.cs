@@ -63,7 +63,7 @@ public class RecipesRepository
     internal bool Edit(Recipe original)
     {
         string sql = @"
-        EDIT recipes
+        UPDATE recipes
         SET
         title = @title,
         instructions = @instructions,
@@ -82,5 +82,17 @@ public class RecipesRepository
         WHERE id = @id;
         ";
         _db.Execute(sql, new { id });
+    }
+
+    internal Recipe Get(int id)
+    {
+        string sql = @"
+       SELECT 
+       *
+       FROM recipes
+       WHERE id = @id;
+       ";
+        Recipe recipe = _db.Query<Recipe>(sql, new { id }).FirstOrDefault();
+        return recipe;
     }
 }
