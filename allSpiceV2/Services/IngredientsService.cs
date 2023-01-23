@@ -17,6 +17,21 @@ public class IngredientsService
         return ingredient;
     }
 
+    internal string Delete(int id, string userId)
+    {
+        Ingredient original = _repo.GetOne(id);
+        if (original == null)
+        {
+            throw new Exception("no ingredient to delete at that id");
+        }
+        if (original.CreatorId != userId)
+        {
+            throw new Exception("not you're Ingredient");
+        }
+        _repo.Delete(id);
+        return $"ingredient at {id} was removed";
+    }
+
     internal List<Ingredient> GetIngredientsByRecipeId(int recipeId, string userId)
     {
         Recipe recipe = _recipesService.GetOne(recipeId, userId);
