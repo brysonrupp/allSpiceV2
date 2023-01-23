@@ -15,7 +15,8 @@ public class IngredientsRepository
     INSERT INTO ingredients
     (name, quantity, creatorId, recipeId)
     VALUES
-    (@name, @quantity, @creatorId, @recipeId)
+    (@name, @quantity, @creatorId, @recipeId);
+    SELECT LAST_INSERT_ID();
     ";
         int id = _db.ExecuteScalar<int>(sql, ingredientData);
         ingredientData.Id = id;
@@ -35,10 +36,10 @@ public class IngredientsRepository
     {
         string sql = @"
         SELECT
-        I.*,
+        i.*,
         a.*
-        From ingredients I
-        JOIN accounts a ON p.creatorId = a.id
+        From ingredients i
+        JOIN accounts a ON i.creatorId = a.id
         WHERE recipeId = @recipeId;
         ";
         List<Ingredient> ingredients = _db.Query<Ingredient, Account, Ingredient>(sql, (ingredient, account) =>
