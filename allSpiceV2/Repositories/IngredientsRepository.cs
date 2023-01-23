@@ -22,6 +22,15 @@ public class IngredientsRepository
         return ingredientData;
     }
 
+    internal void Delete(int id)
+    {
+        string sql = @"
+        DELETE FROM ingredients
+        WHERE id = @id;
+        ";
+        _db.Execute(sql, new { id });
+    }
+
     internal List<Ingredient> GetIngredientsByRecipeId(int recipeId)
     {
         string sql = @"
@@ -38,5 +47,16 @@ public class IngredientsRepository
             return ingredient;
         }, new { recipeId }).ToList();
         return ingredients;
+    }
+
+    internal Ingredient GetOne(int id)
+    {
+        string sql = @"
+        SELECT
+        *
+        FROM ingredients
+        WHERE id = @id;
+        ";
+        return _db.Query<Ingredient>(sql, new { id }).FirstOrDefault();
     }
 }
