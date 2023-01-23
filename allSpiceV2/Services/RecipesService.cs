@@ -34,6 +34,28 @@ public class RecipesService
     }
     internal Recipe Edit(Recipe recipeEdit, int id)
     {
+        Recipe original = Get(id);
+        original.Title = recipeEdit.Title ?? original.Title;
+        original.Instructions = recipeEdit.Instructions ?? original.Instructions;
+        original.Img = recipeEdit.Img ?? original.Img;
+        original.Category = recipeEdit.Category ?? original.Category;
 
+        bool edited = _repo.Edit(original);
+        if (edited == false)
+        {
+            throw new Exception("Recipe was not edited");
+        }
+        return original;
+    }
+
+    internal string Delete(int id, string userId)
+    {
+        Recipe original = GetOne(id, userId);
+        if (original.CreatorId != userId)
+        {
+            throw new Exception("Not your recipe");
+        }
+        _repo.Delete(id);
+        return $"{original.Title} has been deleted";
     }
 }
