@@ -1,6 +1,6 @@
 <template>
-
-    <div class="elevation-6 rounded bg-success">
+    <!-- //NOTE - add @click for active modal after making active recipe function -->
+    <div @click="setActiveRecipe(recipe.id)" class="elevation-6 rounded bg-success">
         <img :src="recipe.img" alt="" class="img-fluid card-img rounded-top">
         <div class="text-center fw-bold p-1">
             <b>{{ recipe.title }}</b>
@@ -13,13 +13,22 @@
 
 
 <script>
+import { AppState } from '../AppState.js';
+import { logger } from '../utils/Logger.js';
+
 
 export default {
     props: {
         recipe: { type: Object, required: true }
     },
-    setup() {
-        return {}
+    setup(props) {
+        return {
+            setActiveRecipe(recipeId) {
+                AppState.activeRecipe = props.recipe
+                // ingredientsService.getIngredients(recipeId)
+                logger.log(AppState.activeRecipe)
+            }
+        }
     }
 };
 </script>
